@@ -37,3 +37,14 @@ next-env.d.ts
 
 # contentlayer
 .contentlayer
+
+# Terraform local state
+terraform.tfstate
+terraform.tfstate.backup
+
+# Terraform working directory
+.terraform/
+
+# Optional: ignore lock file (recommended to commit instead)
+#.terraform.lock.hcl
+
