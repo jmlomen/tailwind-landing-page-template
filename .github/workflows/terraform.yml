@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  apply:
+  s3-bucket-deploy:
     runs-on: ubuntu-latest
 
     steps:
