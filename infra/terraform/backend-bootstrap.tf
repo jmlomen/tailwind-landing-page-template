@@ -29,11 +29,11 @@ resource "aws_s3_bucket_public_access_block" "tfstate_block" {
   restrict_public_buckets = true
 }
 
-terraform {
-  backend "s3" {
-    bucket         = "tfstate-jmlomen-main"
-    key            = "global/terraform.tfstate"
-    region         = "ap-southeast-2"
-    encrypt        = true
-  }
-}
+# terraform {
+#   backend "s3" {
+#     bucket         = "tfstate-jmlomen-main"
+#     key            = "global/terraform.tfstate"
+#     region         = "ap-southeast-2"
+#     encrypt        = true
+#   }
+# }
