@@ -29,7 +29,12 @@ jobs:
 
       - name: Terraform Init
         working-directory: infra/terraform
-        run: terraform init
+        run: |
+          terraform init
+          terraform import aws_s3_bucket.tfstate tfstate-jmlomen-main
+          terraform import aws_s3_bucket_versioning.tfstate_versioning tfstate-jmlomen-main
+          terraform import aws_s3_bucket_server_side_encryption_configuration.tfstate_encryption tfstate-jmlomen-main
+          terraform import aws_s3_bucket_public_access_block.tfstate_block tfstate-jmlomen-main
 
       - name: Terraform Apply
         working-directory: infra/terraform
