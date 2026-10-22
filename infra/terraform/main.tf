@@ -2,6 +2,10 @@ resource "aws_s3_bucket" "sandbox_test" {
   bucket = "sandbox-terraform-test-715831355634"
 }
 
+resource "aws_s3_bucket" "sandbox_test_01" {
+  bucket = "sandbox-terraform-test-01-715831355634"
+}
+
 terraform {
   backend "s3" {
     bucket         = "tfstate-jmlomen-main"
