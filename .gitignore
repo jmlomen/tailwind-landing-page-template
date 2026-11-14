@@ -31,6 +31,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# python
+*.pyc
+*.pyd
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -51,4 +55,3 @@ terraform.tfstate.backup
 
 # Optional: ignore lock file (recommended to commit instead)
 #.terraform.lock.hcl
-
