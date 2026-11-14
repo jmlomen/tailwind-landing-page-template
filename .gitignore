@@ -38,6 +38,10 @@ next-env.d.ts
 # contentlayer
 .contentlayer
 
+# Python
+__pycache__/
+*.pyc
+
 # Terraform local state
 terraform.tfstate
 terraform.tfstate.backup
