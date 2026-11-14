@@ -64,6 +64,18 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
+### Deploy to AWS ECS
+
+The GitHub Actions workflow in `.github/workflows/terraform.yml` builds the app as a Docker image, pushes it to ECR, and deploys it to ECS Fargate behind an Application Load Balancer when changes are pushed to `main`.
+
+Before deploying, configure:
+
+- The Terraform state bucket named in `infra/terraform/main.tf`; it must already exist.
+- A default VPC with at least two subnets in different Availability Zones.
+- The `AWS_ROLE_ARN` GitHub Actions secret. Its IAM role must trust this repository's GitHub Actions OIDC identity and allow Terraform to manage the configured AWS resources, push images to ECR, access the Terraform state bucket, and pass the ECS task roles.
+
+The initial deployment creates the ECR repository before building and pushing the image. The deployment URL is shown in the GitHub Actions run summary and is available with `terraform -chdir=infra/terraform output -raw app_url`. The load balancer is HTTP-only; configure an ACM certificate and HTTPS listener before using this setup for production traffic. ECS tasks use public subnets to avoid NAT gateway costs.
+
 ### Support notes
 
 This template has been developed with the App Router (`app`) and React Server Components. If you’re unfamiliar with these beta features, you can find more information about them on the Next.js beta documentation page. So, please note that any request dealing with React (e.g. extra features, customisations, et cetera) is to be considered out of the support scope.

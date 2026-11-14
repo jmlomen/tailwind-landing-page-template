@@ -12,3 +12,13 @@ output "availability_zones" {
   description = "The two Availability Zones used by the public subnets."
   value       = local.selected_azs
 }
+
+output "app_url" {
+  description = "Public HTTP URL for the Next.js application."
+  value       = "http://${aws_lb.nextjs.dns_name}"
+}
+
+output "ecr_repository_url" {
+  description = "URL of the application's ECR repository."
+  value       = aws_ecr_repository.nextjs.repository_url
+}
