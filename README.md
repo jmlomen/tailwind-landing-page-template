@@ -49,6 +49,27 @@ The `pages/api` directory is mapped to `/api/*`. Files in this directory are tre
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
+### Run locally with Podman Desktop
+
+Start the Podman machine in Podman Desktop, then run these commands from the repository:
+
+```sh
+npm run podman:build
+npm run podman:run
+```
+
+Open [http://localhost:3000](http://localhost:3000). The image appears as `tailwind-landing-page:local` in Podman Desktop, and the container is named `tailwind-landing-page`.
+
+Manage the container directly with the Podman CLI:
+
+```sh
+podman ps --all --filter name=tailwind-landing-page
+podman logs --follow --tail 100 tailwind-landing-page
+podman stop tailwind-landing-page
+```
+
+Running `npm run podman:run` again replaces the existing named container. Rebuild the image after changing the app.
+
 ### Learn More
 
 To learn more about Next.js, take a look at the following resources:
