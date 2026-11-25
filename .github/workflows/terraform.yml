@@ -59,4 +59,5 @@ jobs:
 
       - name: Report application URL
         working-directory: infra/terraform
-        run: echo "Application URL: $(terraform output -raw app_url)" >> "$GITHUB_STEP_SUMMARY"
+        run: |
+          echo "Application URL: $(terraform output -raw app_url)" >> "$GITHUB_STEP_SUMMARY"
