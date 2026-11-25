@@ -49,6 +49,27 @@ The `pages/api` directory is mapped to `/api/*`. Files in this directory are tre
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
+### Run locally with Podman Desktop
+
+Start the Podman machine in Podman Desktop, then run these commands from the repository:
+
+```sh
+npm run podman:build
+npm run podman:run
+```
+
+Open [http://localhost:3000](http://localhost:3000). The image appears as `tailwind-landing-page:local` in Podman Desktop, and the container is named `tailwind-landing-page`.
+
+Manage the container directly with the Podman CLI:
+
+```sh
+podman ps --all --filter name=tailwind-landing-page
+podman logs --follow --tail 100 tailwind-landing-page
+podman stop tailwind-landing-page
+```
+
+Running `npm run podman:run` again replaces the existing named container. Rebuild the image after changing the app.
+
 ### Learn More
 
 To learn more about Next.js, take a look at the following resources:
@@ -63,6 +84,18 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+### Deploy to AWS ECS
+
+The GitHub Actions workflow in `.github/workflows/terraform.yml` builds the app as a Docker image, pushes it to ECR, and deploys it to ECS Fargate behind an Application Load Balancer when changes are pushed to `main`.
+
+Before deploying, configure:
+
+- The Terraform state bucket named in `infra/terraform/main.tf`; it must already exist.
+- A default VPC with at least two subnets in different Availability Zones.
+- The `AWS_ROLE_ARN` GitHub Actions secret. Its IAM role must trust this repository's GitHub Actions OIDC identity and allow Terraform to manage the configured AWS resources, push images to ECR, access the Terraform state bucket, and pass the ECS task roles.
+
+The initial deployment creates the ECR repository before building and pushing the image. The deployment URL is shown in the GitHub Actions run summary and is available with `terraform -chdir=infra/terraform output -raw app_url`. The load balancer is HTTP-only; configure an ACM certificate and HTTPS listener before using this setup for production traffic. ECS tasks use public subnets to avoid NAT gateway costs.
 
 ### Support notes
 

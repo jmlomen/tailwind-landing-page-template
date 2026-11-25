@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "podman:build": "podman build --tag tailwind-landing-page:local --file Dockerfile .",
+    "podman:run": "podman run --detach --replace --name tailwind-landing-page --publish 127.0.0.1:3000:3000 tailwind-landing-page:local"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",

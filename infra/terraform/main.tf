@@ -8,9 +8,9 @@ resource "aws_s3_bucket" "sandbox_test_01" {
 
 terraform {
   backend "s3" {
-    bucket         = "tfstate-jmlomen-main"
-    key            = "tailwind-landing-page-template/terraform.tfstate"
-    region         = "ap-southeast-2"
-    encrypt        = true
+    bucket  = "tfstate-jmlomen-main"
+    key     = "tailwind-landing-page-template/terraform.tfstate"
+    region  = "ap-southeast-2"
+    encrypt = true
   }
 }
