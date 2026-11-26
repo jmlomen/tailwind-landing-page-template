@@ -87,15 +87,26 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ### Deploy to AWS ECS
 
-The GitHub Actions workflow in `.github/workflows/terraform.yml` builds the app as a Docker image, pushes it to ECR, and deploys it to ECS Fargate behind an Application Load Balancer when changes are pushed to `main`.
+The GitHub Actions workflow in `.github/workflows/terraform.yml` builds the app as a Docker image, pushes it to ECR, and deploys it to ECS Fargate behind an Application Load Balancer. It also packages the Python API for Lambda and uploads the ZIP to S3 when changes are pushed to `main`.
 
 Before deploying, configure:
 
 - The Terraform state bucket named in `infra/terraform/main.tf`; it must already exist.
 - A default VPC with at least two subnets in different Availability Zones.
 - The `AWS_ROLE_ARN` GitHub Actions secret. Its IAM role must trust this repository's GitHub Actions OIDC identity and allow Terraform to manage the configured AWS resources, push images to ECR, access the Terraform state bucket, and pass the ECS task roles.
+- The `LAMBDA_ARTIFACT_BUCKET` GitHub Actions repository variable. The bucket must already exist in `ap-southeast-2`, and the `AWS_ROLE_ARN` role must allow `s3:PutObject` to `arn:aws:s3:::<bucket-name>/python-api/*`.
 
 The initial deployment creates the ECR repository before building and pushing the image. The deployment URL is shown in the GitHub Actions run summary and is available with `terraform -chdir=infra/terraform output -raw app_url`. The load balancer is HTTP-only; configure an ACM certificate and HTTPS listener before using this setup for production traffic. ECS tasks use public subnets to avoid NAT gateway costs.
+
+The Python API ZIP contains `sites.py` and its dependencies at the archive root and is uploaded under `python-api/<commit-sha>/<run-id>-<attempt>.zip`. This packages and stores the Lambda artifact; it does not create or deploy a Lambda function.
+
+Run the Python API tests with:
+
+```bash
+cd services/python-api
+python -m pip install -r requirements-dev.txt
+python -m pytest
+```
 
 ### Support notes
 
