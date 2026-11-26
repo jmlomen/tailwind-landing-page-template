@@ -100,6 +100,14 @@ The initial deployment creates the ECR repository before building and pushing th
 
 The Python API ZIP contains `sites.py` and its dependencies at the archive root and is uploaded under `python-api/<commit-sha>/<run-id>-<attempt>.zip`. This packages and stores the Lambda artifact; it does not create or deploy a Lambda function.
 
+Run the Python API tests with:
+
+```bash
+cd services/python-api
+python -m pip install -r requirements-dev.txt
+python -m pytest
+```
+
 ### Support notes
 
 This template has been developed with the App Router (`app`) and React Server Components. If you’re unfamiliar with these beta features, you can find more information about them on the Next.js beta documentation page. So, please note that any request dealing with React (e.g. extra features, customisations, et cetera) is to be considered out of the support scope.
