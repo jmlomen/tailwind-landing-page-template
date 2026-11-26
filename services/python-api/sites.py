@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from mangum import Mangum
 
 app = FastAPI()
 
@@ -12,3 +13,5 @@ def get_crops():
         {"id": 1, "name": "Corn"},
         {"id": 2, "name": "Soybeans"}
     ]
+
+handler = Mangum(app)

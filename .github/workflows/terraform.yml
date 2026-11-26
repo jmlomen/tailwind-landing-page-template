@@ -1,4 +1,4 @@
-name: Deploy Next.js to ECS
+name: Deploy Next.js to ECS and package Python API
 
 on:
   push:
@@ -13,6 +13,49 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  package-python-api:
+    name: Package Python API for Lambda
+    runs-on: ubuntu-latest
+    env:
+      LAMBDA_ARTIFACT_BUCKET: ${{ vars.LAMBDA_ARTIFACT_BUCKET }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate artifact bucket configuration
+        run: |
+          if [ -z "$LAMBDA_ARTIFACT_BUCKET" ]; then
+            echo "Set the LAMBDA_ARTIFACT_BUCKET repository variable before running this workflow." >&2
+            exit 1
+          fi
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build Lambda package
+        run: |
+          set -euo pipefail
+          mkdir package
+          python -m pip install --requirement services/python-api/requirements.txt --target package
+          cp services/python-api/sites.py package/
+          PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=package python -c "from sites import handler"
+          (cd package && zip -qr "$GITHUB_WORKSPACE/python-api.zip" .)
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ap-southeast-2
+
+      - name: Upload Lambda package to S3
+        run: |
+          object_key="python-api/${GITHUB_SHA}/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.zip"
+          aws s3 cp python-api.zip "s3://${LAMBDA_ARTIFACT_BUCKET}/${object_key}" --region ap-southeast-2 --no-progress
+          echo "Python API Lambda package: s3://${LAMBDA_ARTIFACT_BUCKET}/${object_key}" >> "$GITHUB_STEP_SUMMARY"
+
   terraform-deploy:
     runs-on: ubuntu-latest
 
